@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUKMEE - Premium Mobile Repair & Device Care</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #0A0A0A;
+            --bg-elevated: #111111;
+            --bg-card: #151515;
+            --bg-surface: #1C1C1E;
+            --text-primary: #F5F5F7;
+            --text-secondary: #A1A1A6;
+            --text-muted: #6E6E73;
+            --border: rgba(255,255,255,0.10);
+            --border-soft: rgba(255,255,255,0.06);
+            --accent: #B7FF3C;
+            --accent-soft: #A8E63D;
+            --success: #30D158;
+            --warning: #FFD60A;
+            --error: #FF453A;
+            --info: #64D2FF;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a { color: inherit; text-decoration: none; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; }
+        input, select { font-family: inherit; background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-primary); padding: 12px 16px; border-radius: 8px; }
+        input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(183, 255, 60, 0.1); }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 80px;
+            height: 72px;
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .nav.scrolled {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .nav-logo {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.8px;
+            background: linear-gradient(135deg, var(--accent), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-center { display: flex; gap: 48px; font-size: 15px; }
+        .nav-center a { color: var(--text-secondary); transition: color 0.2s; }
+        .nav-center a:hover { color: var(--accent); }
+        .nav-right { display: flex; gap: 24px; align-items: center; }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #a0e608);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(183, 255, 60, 0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: rgba(183, 255, 60, 0.05);
+        }
+
+        .btn-text { background: none; color: var(--accent); padding: 12px 0; }
+        .btn-text:hover { color: var(--accent-soft); }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 120px 40px 80px;
+            margin-top: 72px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(183, 255, 60, 0.03) 0%, rgba(0, 0, 0, 0) 100%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(183, 255, 60, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .hero > * { position: relative; z-index: 1; }
+
+        .hero h1 {
+            font-size: 88px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 32px;
+            letter-spacing: -1.5px;
+            max-width: 1000px;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--accent), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .hero-support {
+            font-size: 17px;
+            color: var(--text-muted);
+            margin-bottom: 56px;
+            max-width: 700px;
+            line-height: 1.6;
+        }
+
+        .hero-ctas { display: flex; gap: 16px; justify-content: center; margin-bottom: 56px; flex-wrap: wrap; }
+        .hero-features { display: flex; gap: 48px; justify-content: center; font-size: 15px; color: var(--text-secondary); }
+
+        /* Section */
+        .section {
+            padding: 160px 80px;
+            max-width: 1440px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .section h2 {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 80px;
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+
+        .section h3 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 40px;
+        }
+
+        /* Image Container */
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            aspect-ratio: 16/9;
+            margin-bottom: 40px;
+            border: 1px solid var(--border);
+        }
+
+        .image-bg {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-surface) 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(183, 255, 60, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(183, 255, 60, 0.15);
+        }
+
+        .card:hover::before { opacity: 1; }
+
+        .card.selected {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(183, 255, 60, 0.1), rgba(183, 255, 60, 0.05));
+        }
+
+        .card > * { position: relative; z-index: 1; }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .card-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-top: 12px;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 100px;
+        }
+
+        .feature-item {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-surface) 100%);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .feature-desc {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 40px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 22px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent) 0%, transparent 100%);
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 40px;
+            align-items: flex-start;
+        }
+
+        .timeline-node {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            margin-right: 32px;
+            margin-top: 6px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+            border: 2px solid var(--bg-primary);
+        }
+
+        .timeline-item.completed .timeline-node {
+            background: var(--accent);
+            box-shadow: 0 0 0 4px rgba(183, 255, 60, 0.1);
+        }
+
+        .timeline-item.active .timeline-node {
+            background: var(--accent);
+            width: 16px;
+            height: 16px;
+            margin-right: 30px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(183, 255, 60, 0.7); }
+            50% { box-shadow: 0 0 0 8px rgba(183, 255, 60, 0); }
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .timeline-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Testimonial */
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .testimonial-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-surface) 100%);
+            padding: 32px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .testimonial-stars {
+            font-size: 14px;
+            margin-bottom: 16px;
+            color: var(--accent);
+        }
+
+        .testimonial-text {
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+        }
+
+        .testimonial-author {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .testimonial-role {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Professional Card */
+        .professional-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+        }
+
+        .professional-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-surface) 100%);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .professional-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+        }
+
+        .professional-avatar {
+            width: 100%;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, rgba(183, 255, 60, 0.2), rgba(100, 210, 255, 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+        }
+
+        .professional-info {
+            padding: 24px;
+        }
+
+        .professional-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .professional-rating {
+            font-size: 13px;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .professional-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin: 80px 0;
+            padding: 60px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 52px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .stat-label {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* Form */
+        .form-group { margin-bottom: 24px; }
+        .form-label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary); }
+        .form-input { width: 100%; }
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
+
+        /* Summary Card */
+        .summary-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-surface) 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .summary-row:last-child { border-bottom: none; }
+        .summary-label { color: var(--text-secondary); font-size: 14px; }
+        .summary-value { font-weight: 600; font-size: 15px; }
+
+        /* Progress */
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 60px;
+        }
+
+        .progress-step {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--bg-surface);
+            transition: all 0.3s;
+        }
+
+        .progress-step.active {
+            background: var(--accent);
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        .progress-step.completed {
+            background: var(--success);
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-elevated) 100%);
+            padding: 80px;
+            border-top: 1px solid var(--border-soft);
+        }
+
+        .footer-content {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .footer-column a {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            transition: color 0.2s;
+        }
+
+        .footer-column a:hover {
+            color: var(--accent);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border-soft);
+            padding-top: 24px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Order Status */
+        .order-status {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-surface) 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 40px;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .order-id {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .status-badge {
+            background: rgba(48, 209, 88, 0.1);
+            color: var(--success);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .nav { padding: 0 40px; }
+            .section { padding: 100px 40px; }
+            .section h2 { font-size: 40px; margin-bottom: 60px; }
+            .hero h1 { font-size: 60px; }
+            .nav-center { display: none; }
+            .footer-content { grid-template-columns: repeat(2, 1fr); }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 640px) {
+            .nav { padding: 0 20px; height: 64px; }
+            .section { padding: 60px 20px; }
+            .section h2 { font-size: 28px; }
+            .hero { padding: 100px 20px 60px; margin-top: 64px; }
+            .hero h1 { font-size: 40px; }
+            .hero::before { width: 300px; height: 300px; }
+            .hero-ctas { flex-direction: column; }
+            .hero-features { flex-direction: column; gap: 24px; }
+            .nav-right { gap: 12px; }
+            .btn { padding: 11px 16px; font-size: 14px; }
+            .footer-content { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* SVG Phone Device */
+        .phone-device {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .device-illustration {
+            position: relative;
+            width: 240px;
+            height: 480px;
+        }
+    
+        /* ===== HUKMEE V2 visual + alignment fixes ===== */
+        html { scroll-padding-top: 92px; }
+        body { overflow-x: hidden; }
+        .section { width: min(1180px, calc(100% - 48px)); margin: 0 auto; padding-left: 0; padding-right: 0; }
+        .nav { width: 100%; box-sizing: border-box; }
+        .nav-logo { cursor: pointer; letter-spacing: -1.5px; }
+        .hero-v2 { min-height: 92vh; display:grid; grid-template-columns: 1.02fr .98fr; align-items:center; gap:64px; width:min(1280px, calc(100% - 64px)); margin:0 auto; padding:140px 0 80px; }
+        .hero-copy { position:relative; z-index:2; }
+        .eyebrow { display:inline-flex; align-items:center; gap:9px; padding:8px 12px; border:1px solid rgba(183,255,60,.24); border-radius:999px; color:var(--accent); background:rgba(183,255,60,.06); font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin-bottom:24px; }
+        .eyebrow:before { content:''; width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 18px rgba(183,255,60,.8); }
+        .hero-v2 h1 { font-size:clamp(54px,7vw,94px); line-height:.94; letter-spacing:-.065em; max-width:760px; margin-bottom:28px; }
+        .hero-v2 h1 span { color:var(--accent); }
+        .hero-v2 .hero-support { margin:0 0 34px; max-width:650px; }
+        .hero-visual { min-height:620px; position:relative; border-radius:34px; overflow:hidden; border:1px solid rgba(255,255,255,.10); background:#101010; box-shadow:0 35px 100px rgba(0,0,0,.5); }
+        .hero-visual img { width:100%; height:100%; min-height:620px; object-fit:cover; opacity:.88; filter:saturate(.7) contrast(1.08); }
+        .hero-visual:after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.82) 100%),linear-gradient(90deg,rgba(183,255,60,.08),transparent 42%); }
+        .visual-chip { position:absolute; z-index:2; left:26px; right:26px; bottom:26px; display:flex; justify-content:space-between; align-items:end; gap:20px; padding:22px; border-radius:20px; background:rgba(9,9,9,.72); border:1px solid rgba(255,255,255,.12); backdrop-filter:blur(18px); }
+        .visual-chip strong { display:block; font-size:20px; margin-bottom:5px; }
+        .visual-chip span { color:var(--text-secondary); font-size:13px; }
+        .trust-strip { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:20px; overflow:hidden; margin-top:-20px; position:relative; z-index:3; }
+        .trust-item { background:#0b0b0b; padding:24px; min-height:112px; }
+        .trust-item b { display:block; font-size:15px; margin:10px 0 4px; }
+        .trust-item span { color:var(--text-secondary); font-size:13px; line-height:1.5; }
+        .trust-icon { color:var(--accent); font-size:20px; }
+        .section-kicker { color:var(--accent); text-transform:uppercase; letter-spacing:.16em; font-size:12px; font-weight:700; margin-bottom:16px; }
+        .section-head { display:flex; justify-content:space-between; gap:40px; align-items:end; margin-bottom:48px; }
+        .section-head h2 { margin:0; max-width:720px; }
+        .section-head p { max-width:430px; color:var(--text-secondary); line-height:1.7; margin:0; }
+        .service-grid-v2 { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+        .service-card-v2 { min-height:260px; padding:26px; border-radius:24px; border:1px solid var(--border); background:linear-gradient(155deg,#151515,#0c0c0c); display:flex; flex-direction:column; cursor:pointer; transition:.3s ease; position:relative; overflow:hidden; }
+        .service-card-v2:before { content:''; position:absolute; width:160px; height:160px; border-radius:50%; background:rgba(183,255,60,.07); right:-70px; top:-70px; filter:blur(2px); }
+        .service-card-v2:hover { transform:translateY(-7px); border-color:rgba(183,255,60,.45); box-shadow:0 24px 50px rgba(0,0,0,.3); }
+        .service-card-v2 .card-icon { font-size:34px; margin-bottom:auto; }
+        .service-card-v2 .card-title { margin-top:36px; }
+        .service-meta { display:flex; justify-content:space-between; gap:12px; margin-top:18px; padding-top:16px; border-top:1px solid var(--border); font-size:12px; color:var(--text-secondary); }
+        .service-meta b { color:var(--accent); font-size:14px; }
+        .banner { width:min(1280px,calc(100% - 48px)); margin:70px auto; min-height:480px; border-radius:32px; overflow:hidden; position:relative; border:1px solid var(--border); background:#111; }
+        .banner img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(.65) contrast(1.1); }
+        .banner:after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,rgba(0,0,0,.94) 0%,rgba(0,0,0,.75) 44%,rgba(0,0,0,.12) 100%); }
+        .banner-content { position:relative; z-index:2; width:min(560px,80%); padding:70px; }
+        .banner-content h2 { margin-bottom:20px; }
+        .banner-content p { color:#c8c8cc; line-height:1.75; margin-bottom:30px; }
+        .process-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; counter-reset:step; }
+        .process-card { counter-increment:step; padding:28px; min-height:230px; border:1px solid var(--border); border-radius:24px; background:#0d0d0d; }
+        .process-card:before { content:'0' counter(step); display:block; color:var(--accent); font-size:12px; font-weight:800; letter-spacing:.16em; margin-bottom:52px; }
+        .process-card h3 { font-size:19px; margin-bottom:10px; }
+        .process-card p { color:var(--text-secondary); font-size:14px; line-height:1.65; }
+        .tracking-showcase { display:grid; grid-template-columns:.85fr 1.15fr; gap:18px; align-items:stretch; }
+        .tracking-copy,.tracking-panel { border:1px solid var(--border); border-radius:28px; background:linear-gradient(145deg,#151515,#0b0b0b); padding:42px; }
+        .tracking-copy { display:flex; flex-direction:column; justify-content:center; }
+        .tracking-copy p { color:var(--text-secondary); line-height:1.7; margin:18px 0 28px; }
+        .mini-progress { display:flex; flex-direction:column; gap:18px; }
+        .mini-step { display:flex; align-items:center; gap:14px; color:var(--text-secondary); font-size:14px; }
+        .mini-dot { width:12px;height:12px;border-radius:50%;background:#353535;box-shadow:0 0 0 5px rgba(255,255,255,.03); }
+        .mini-step.done { color:var(--text-primary); }.mini-step.done .mini-dot,.mini-step.active .mini-dot{background:var(--accent)}
+        .mini-step.active { color:var(--accent); font-weight:700; }
+        .brand-pills { display:flex; flex-wrap:wrap; gap:10px; }
+        .brand-pill { padding:13px 18px; border:1px solid var(--border); border-radius:999px; background:#0d0d0d; cursor:pointer; transition:.2s; }
+        .brand-pill:hover { border-color:var(--accent); color:var(--accent); }
+        .cta-panel { border-radius:32px; padding:72px 48px; text-align:center; background:radial-gradient(circle at 50% 0%,rgba(183,255,60,.16),transparent 40%),#0d0d0d; border:1px solid rgba(183,255,60,.18); }
+        .repair-shell { padding-top:130px; }
+        .repair-layout { display:grid; grid-template-columns:280px 1fr; gap:32px; align-items:start; }
+        .repair-sidebar { position:sticky; top:100px; padding:24px; border:1px solid var(--border); border-radius:22px; background:#0d0d0d; }
+        .repair-sidebar h4 { font-size:13px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.12em; margin-bottom:18px; }
+        .repair-step { padding:12px 0; border-bottom:1px solid var(--border); font-size:14px; display:flex; gap:10px; align-items:center; }
+        .repair-step:last-child{border:0}.repair-step i{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#202020;color:var(--text-secondary);font-style:normal;font-size:11px}.repair-step.done i,.repair-step.active i{background:var(--accent);color:#000}.repair-step.active{color:var(--accent)}
+        .choice-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+        .choice-card { padding:22px; border:1px solid var(--border); border-radius:18px; background:#101010; cursor:pointer; min-height:110px; transition:.2s; }
+        .choice-card:hover,.choice-card.selected { border-color:var(--accent); background:rgba(183,255,60,.045); transform:translateY(-2px); }
+        .choice-card.selected { box-shadow:inset 0 0 0 1px rgba(183,255,60,.22); }
+        .form-input, select.form-input { box-sizing:border-box; }
+        .summary-card { overflow:hidden; }
+        .footer { margin-top:100px; }
+        @media(max-width:1000px){.hero-v2{grid-template-columns:1fr;padding-top:130px}.hero-visual{min-height:480px}.hero-visual img{min-height:480px}.trust-strip{grid-template-columns:repeat(2,1fr)}.service-grid-v2{grid-template-columns:repeat(2,1fr)}.process-grid{grid-template-columns:repeat(2,1fr)}.tracking-showcase{grid-template-columns:1fr}.repair-layout{grid-template-columns:1fr}.repair-sidebar{position:relative;top:0}.choice-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:640px){.section,.banner,.hero-v2{width:min(100% - 28px,1180px)}.hero-v2{gap:28px;padding-top:112px;min-height:auto}.hero-v2 h1{font-size:48px}.hero-visual,.hero-visual img{min-height:420px}.visual-chip{left:14px;right:14px;bottom:14px;padding:16px}.trust-strip,.service-grid-v2,.process-grid,.choice-grid{grid-template-columns:1fr}.section-head{display:block}.section-head p{margin-top:16px}.banner{min-height:520px}.banner:after{background:linear-gradient(0deg,rgba(0,0,0,.96) 0%,rgba(0,0,0,.5) 70%,rgba(0,0,0,.15) 100%)}.banner-content{position:absolute;bottom:0;padding:28px;width:auto}.tracking-copy,.tracking-panel{padding:26px}.cta-panel{padding:48px 22px}.nav-right .btn-text{display:none}}
+
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Demo Data
+        const BRANDS = [
+            { id: 'apple', name: 'Apple', icon: '🍎' },
+            { id: 'samsung', name: 'Samsung', icon: '📱' },
+            { id: 'oneplus', name: 'OnePlus', icon: '⚡' },
+            { id: 'xiaomi', name: 'Xiaomi', icon: '🔴' },
+            { id: 'google', name: 'Google', icon: '🔍' },
+            { id: 'motorola', name: 'Motorola', icon: '🚗' },
+            { id: 'realme', name: 'Realme', icon: '💫' },
+            { id: 'vivo', name: 'Vivo', icon: '✨' },
+            { id: 'oppo', name: 'Oppo', icon: '📸' },
+        ];
+
+        const DEVICES = {
+            apple: [
+                { id: 'iphone15pro', name: 'iPhone 15 Pro' },
+                { id: 'iphone15', name: 'iPhone 15' },
+                { id: 'iphone14pro', name: 'iPhone 14 Pro' },
+                { id: 'iphone14', name: 'iPhone 14' },
+            ],
+            samsung: [
+                { id: 's24ultra', name: 'Galaxy S24 Ultra' },
+                { id: 's24', name: 'Galaxy S24' },
+                { id: 's23', name: 'Galaxy S23' },
+            ],
+            oneplus: [
+                { id: '12', name: 'OnePlus 12' },
+                { id: '11', name: 'OnePlus 11' },
+            ],
+            xiaomi: [
+                { id: '14ultra', name: 'Xiaomi 14 Ultra' },
+                { id: '14', name: 'Xiaomi 14' },
+            ],
+            google: [
+                { id: 'pixel9', name: 'Pixel 9 Pro' },
+                { id: 'pixel8', name: 'Pixel 8 Pro' },
+            ],
+            motorola: [
+                { id: 'razr', name: 'Motorola Razr 40' },
+            ],
+            realme: [
+                { id: '12', name: 'Realme 12' },
+            ],
+            vivo: [
+                { id: 'x100', name: 'Vivo X100' },
+            ],
+            oppo: [
+                { id: 'findx7', name: 'Oppo Find X7' },
+            ],
+        };
+
+        const REPAIRS = [
+            { id: 'screen', name: 'Screen Repair', icon: '📱', description: 'LCD, AMOLED, or glass replacement', price: 3999, time: '2-3 hours', detail: 'Expert glass and LCD replacement with original parts' },
+            { id: 'battery', name: 'Battery Replacement', icon: '🔋', description: 'Battery health restored to 100%', price: 2499, time: '1-2 hours', detail: 'Original lithium-ion battery installation' },
+            { id: 'charging', name: 'Charging Port Repair', icon: '⚡', description: 'Lightning or USB-C port service', price: 1999, time: '1.5 hours', detail: 'Professional port repair and replacement' },
+            { id: 'camera', name: 'Camera Repair', icon: '📷', description: 'Front or rear camera module service', price: 2999, time: '2 hours', detail: 'High-resolution camera restoration' },
+            { id: 'audio', name: 'Speaker / Microphone', icon: '🔊', description: 'Audio components service', price: 1499, time: '1 hour', detail: 'Crystal-clear audio restoration' },
+            { id: 'backglass', name: 'Back Glass Replacement', icon: '🔲', description: 'Back panel replacement service', price: 2499, time: '1.5 hours', detail: 'Precision back glass installation' },
+            { id: 'water', name: 'Water Damage Repair', icon: '💧', description: 'Water damage assessment and repair', price: 3499, time: '3-4 hours', detail: 'Complete water damage restoration' },
+            { id: 'other', name: 'Other Repair', icon: '🔧', description: 'Other repairs and maintenance', price: 1999, time: 'Varies', detail: 'Custom repair solutions' },
+        ];
+
+        const TESTIMONIALS = [
+            {
+                name: 'Rajesh Kumar',
+                role: 'Business Owner, Delhi',
+                text: 'HUKMEE fixed my phone screen in 2 hours. Transparent pricing, professional service. Highly recommended!',
+                rating: 5
+            },
+            {
+                name: 'Priya Sharma',
+                role: 'Software Engineer, Bangalore',
+                text: 'The tracking system is incredible. I could see exactly when my phone would be ready. Best repair experience ever.',
+                rating: 5
+            },
+            {
+                name: 'Amit Singh',
+                role: 'Student, Mumbai',
+                text: 'Professional technicians, warranty coverage, and they came to my home. Worth every penny.',
+                rating: 5
+            },
+            {
+                name: 'Neha Patel',
+                role: 'Entrepreneur, Pune',
+                text: 'Customer service was responsive and the repair was done perfectly. No hidden charges.',
+                rating: 4.8
+            },
+        ];
+
+        const PROFESSIONALS = [
+            { 
+                id: 1, 
+                name: 'Raj Kumar', 
+                rating: 4.9, 
+                reviews: 284, 
+                specialization: 'Screen & LCD Specialist',
+                experience: '8+ years',
+                icon: '👨‍🔧'
+            },
+            { 
+                id: 2, 
+                name: 'Priya Singh', 
+                rating: 4.8, 
+                reviews: 156, 
+                specialization: 'Battery & Power Expert',
+                experience: '6+ years',
+                icon: '👩‍🔧'
+            },
+            { 
+                id: 3, 
+                name: 'Amit Patel', 
+                rating: 4.9, 
+                reviews: 312, 
+                specialization: 'All-in-one Technician',
+                experience: '10+ years',
+                icon: '👨‍🔧'
+            },
+        ];
+
+        const TIME_SLOTS = [
+            '09:00 AM', '10:00 AM', '11:00 AM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'
+        ];
+
+        // SVG Phone Illustration
+        function PhoneIllustration() {
+            return (
+                <svg viewBox="0 0 240 480" width="240" height="480" style={{ filter: 'drop-shadow(0 20px 60px rgba(183, 255, 60, 0.15))' }}>
+                    {/* Phone Body */}
+                    <rect x="20" y="20" width="200" height="440" rx="30" fill="#1a1a1a" stroke="rgba(183, 255, 60, 0.3)" strokeWidth="2"/>
+                    
+                    {/* Notch */}
+                    <rect x="80" y="20" width="80" height="28" rx="14" fill="#000"/>
+                    
+                    {/* Screen */}
+                    <defs>
+                        <linearGradient id="screenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style={{stopColor: 'rgba(183, 255, 60, 0.2)', stopOpacity: 1}} />
+                            <stop offset="100%" style={{stopColor: 'rgba(100, 210, 255, 0.2)', stopOpacity: 1}} />
+                        </linearGradient>
+                    </defs>
+                    <rect x="25" y="55" width="190" height="385" rx="20" fill="url(#screenGrad)"/>
+                    
+                    {/* Camera */}
+                    <circle cx="180" cy="45" r="8" fill="#333"/>
+                    <circle cx="180" cy="45" r="5" fill="#1a1a1a"/>
+                    
+                    {/* Home Indicator */}
+                    <rect x="95" y="425" width="50" height="3" rx="1.5" fill="rgba(183, 255, 60, 0.3)"/>
+                </svg>
+            );
+        }
+
+        // Navigation
+        function Navigation() {
+            const [scrolled, setScrolled] = useState(false);
+
+            useEffect(() => {
+                const handleScroll = () => setScrolled(window.scrollY > 50);
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            return (
+                <nav className={`nav ${scrolled ? 'scrolled' : ''}`}>
+                    <div className="nav-logo" onClick={() => { window.history.pushState(null, '', '/'); window.setCurrentPage('/'); }}>HUKMEE</div>
+                    <div className="nav-center">
+                        <a href="/repair" onClick={(e) => { e.preventDefault(); window.history.pushState(null, '', '/repair'); window.setCurrentPage('/repair'); }}>Repairs</a>
+                        <a href="/#how" onClick={(e) => { e.preventDefault(); window.history.pushState(null, '', '/'); window.setCurrentPage('/'); setTimeout(() => document.getElementById('how')?.scrollIntoView({behavior:'smooth'}), 80); }}>How It Works</a>
+                        <a href="/track" onClick={(e) => { e.preventDefault(); window.history.pushState(null, '', '/track'); window.setCurrentPage('/track'); }}>Track Repair</a>
+                        <a href="#support">Support</a>
+                    </div>
+                    <div className="nav-right">
+                        <button className="btn-text" onClick={() => { window.history.pushState(null, '', '/track'); window.setCurrentPage('/track'); }}>Track</button>
+                        <button className="btn btn-primary" onClick={() => { window.history.pushState(null, '', '/repair'); window.setCurrentPage('/repair'); }}>Book Repair</button>
+                    </div>
+                </nav>
+            );
+        }
+
+        // Home Page
+        function HomePage() {
+            const navigate = useNavigate();
+            return (
+                <div>
+                    <section className="hero-v2">
+                        <div className="hero-copy fade-in-up">
+                            <div className="eyebrow">Premium device care</div>
+                            <h1>Your phone.<br/><span>Back to perfect.</span></h1>
+                            <p className="hero-support">A clearer way to repair your smartphone—choose the issue, know the expected cost, book the service and follow every important repair milestone in one place.</p>
+                            <div className="hero-ctas">
+                                <button className="btn btn-primary" onClick={() => navigate('/repair')}>Start a Repair →</button>
+                                <button className="btn btn-secondary" onClick={() => navigate('/track')}>Track Existing Repair</button>
+                            </div>
+                            <div className="hero-features"><span>✓ Doorstep option</span><span>✓ Upfront estimate</span><span>✓ Repair visibility</span></div>
+                        </div>
+                        <div className="hero-visual fade-in-up">
+                            <img src="https://cdn.ebnermediagroup.de/telecom-handel_de/Reparatur_Chat_GPT_4a892f1bf9_640x455.jpg" alt="Professional smartphone repair workstation" />
+                            <div className="visual-chip"><div><strong>Precision repair, clearly tracked.</strong><span>From booking to quality check and warranty activation.</span></div><div className="status-badge">Live status</div></div>
+                        </div>
+                    </section>
+
+                    <section className="section" style={{paddingTop:'20px'}}>
+                        <div className="trust-strip">
+                            <div className="trust-item"><div className="trust-icon">⌁</div><b>Simple booking</b><span>Select device, issue and preferred service slot.</span></div>
+                            <div className="trust-item"><div className="trust-icon">₹</div><b>Clear estimates</b><span>See the expected repair cost before confirming.</span></div>
+                            <div className="trust-item"><div className="trust-icon">◎</div><b>Status visibility</b><span>Follow the important stages of your repair journey.</span></div>
+                            <div className="trust-item"><div className="trust-icon">◇</div><b>Warranty record</b><span>Keep service and warranty information connected to the repair.</span></div>
+                        </div>
+                    </section>
+
+                    <section className="section" id="repair">
+                        <div className="section-head"><div><div className="section-kicker">Repair services</div><h2>Choose what needs attention.</h2></div><p>Start with the issue. We’ll guide you through device selection, service details and booking without unnecessary steps.</p></div>
+                        <div className="service-grid-v2">
+                            {REPAIRS.map(repair => <div key={repair.id} className="service-card-v2" onClick={() => navigate(`/repair?issue=${repair.id}`)}><span className="card-icon">{repair.icon}</span><div className="card-title">{repair.name}</div><div className="card-desc">{repair.description}</div><div className="service-meta"><span>Estimated from</span><b>₹{repair.price}</b></div></div>)}
+                        </div>
+                    </section>
+
+                    <section className="banner">
+                        <img src="https://www.telefix.com.tr/gorseller/ekran_degisimi.png" alt="Technician carrying out a smartphone screen repair" />
+                        <div className="banner-content"><div className="section-kicker">Professional care</div><h2>Built around the repair journey—not just a booking form.</h2><p>HUKMEE brings selection, booking, technician assignment, repair progress, quality check and warranty information into one connected customer experience.</p><button className="btn btn-primary" onClick={() => navigate('/repair')}>Explore Repair Options</button></div>
+                    </section>
+
+                    <section className="section" id="how">
+                        <div className="section-head"><div><div className="section-kicker">How it works</div><h2>Four clear steps from problem to repaired.</h2></div><p>No confusing service-centre journey. HUKMEE keeps the experience understandable at every stage.</p></div>
+                        <div className="process-grid">
+                            <div className="process-card"><h3>Identify your device</h3><p>Choose the brand and exact model so the service journey starts with the right context.</p></div>
+                            <div className="process-card"><h3>Select the issue</h3><p>Pick the repair category and review service details, expected time and estimate.</p></div>
+                            <div className="process-card"><h3>Book your service</h3><p>Choose the service method, location, date and preferred time slot.</p></div>
+                            <div className="process-card"><h3>Track the repair</h3><p>Follow key milestones through repair, quality check, completion and warranty activation.</p></div>
+                        </div>
+                    </section>
+
+                    <section className="section">
+                        <div className="tracking-showcase">
+                            <div className="tracking-copy"><div className="section-kicker">Repair visibility</div><h2>Know what’s happening to your device.</h2><p>The tracking experience turns an uncertain repair into a clear sequence of milestones, with the assigned professional, service amount and expected progress available in one view.</p><button className="btn btn-secondary" onClick={() => navigate('/track')}>Open Repair Tracker →</button></div>
+                            <div className="tracking-panel"><div style={{display:'flex',justifyContent:'space-between',gap:'20px',marginBottom:'32px'}}><div><div style={{color:'var(--text-secondary)',fontSize:'12px'}}>SAMPLE JOURNEY</div><h3 style={{marginTop:'6px'}}>Screen repair</h3></div><div className="status-badge">In progress</div></div><div className="mini-progress"><div className="mini-step done"><span className="mini-dot"></span>Booking confirmed</div><div className="mini-step done"><span className="mini-dot"></span>Professional assigned</div><div className="mini-step done"><span className="mini-dot"></span>Device inspection</div><div className="mini-step active"><span className="mini-dot"></span>Repair in progress</div><div className="mini-step"><span className="mini-dot"></span>Quality check</div><div className="mini-step"><span className="mini-dot"></span>Repair completed</div></div></div>
+                        </div>
+                    </section>
+
+                    <section className="section">
+                        <div className="section-head"><div><div className="section-kicker">Supported devices</div><h2>Popular smartphone brands.</h2></div><p>Select a brand to jump directly into the repair configurator.</p></div>
+                        <div className="brand-pills">{BRANDS.map(brand => <div key={brand.id} className="brand-pill" onClick={() => navigate(`/repair?brand=${brand.id}`)}>{brand.icon} &nbsp;{brand.name}</div>)}</div>
+                    </section>
+
+                    <section className="section"><div className="cta-panel"><div className="section-kicker">Ready when you are</div><h2 style={{marginBottom:'18px'}}>Start with your device. We’ll guide the rest.</h2><p style={{maxWidth:'680px',margin:'0 auto 32px',color:'var(--text-secondary)',lineHeight:'1.7'}}>Choose the phone and repair category, review the service details and continue into booking in a few focused steps.</p><div className="hero-ctas"><button className="btn btn-primary" onClick={() => navigate('/repair')}>Book a Repair</button><button className="btn btn-secondary" onClick={() => navigate('/track')}>Track a Repair</button></div></div></section>
+                </div>
+            );
+        }
+
+        // Repair Page
+        function RepairPage() {
+            const navigate = useNavigate();
+            const params = new URLSearchParams(window.location.search);
+            const initialIssue = params.get('issue');
+            const [selectedBrand, setSelectedBrand] = useState(params.get('brand'));
+            const [selectedDevice, setSelectedDevice] = useState(null);
+            const [search, setSearch] = useState('');
+            const [selectedIssue, setSelectedIssue] = useState(initialIssue);
+            const brands = BRANDS.filter(b => b.name.toLowerCase().includes(search.toLowerCase()) || (DEVICES[b.id]||[]).some(d => d.name.toLowerCase().includes(search.toLowerCase())));
+            const devices = (DEVICES[selectedBrand] || []).filter(d => d.name.toLowerCase().includes(search.toLowerCase()) || !search);
+            const goNext = (repairId) => { if(selectedBrand && selectedDevice) navigate(`/device-repair?brand=${selectedBrand}&device=${selectedDevice}&repair=${repairId}`); };
+            return (<div className="repair-shell"><section className="section">
+                <div className="section-head"><div><div className="section-kicker">Repair configurator</div><h1 style={{fontSize:'clamp(42px,6vw,68px)',lineHeight:1,letterSpacing:'-.05em'}}>Tell us about your device.</h1></div><p>Choose the brand, model and issue. Your selections stay visible while you move through the flow.</p></div>
+                <div className="repair-layout">
+                    <aside className="repair-sidebar"><h4>Your repair</h4><div className={`repair-step ${selectedBrand?'done':'active'}`}><i>1</i><span>{selectedBrand ? BRANDS.find(b=>b.id===selectedBrand)?.name : 'Choose brand'}</span></div><div className={`repair-step ${selectedDevice?'done':selectedBrand?'active':''}`}><i>2</i><span>{selectedDevice ? DEVICES[selectedBrand]?.find(d=>d.id===selectedDevice)?.name : 'Choose model'}</span></div><div className={`repair-step ${selectedIssue?'active':''}`}><i>3</i><span>{selectedIssue ? REPAIRS.find(r=>r.id===selectedIssue)?.name : 'Choose issue'}</span></div></aside>
+                    <div>
+                        <div className="form-group"><label className="form-label">Search brand or model</label><input value={search} onChange={e=>setSearch(e.target.value)} type="search" placeholder="Try Apple, Galaxy, Pixel..." className="form-input" /></div>
+                        <div style={{marginTop:'34px'}}><h3 style={{marginBottom:'18px'}}>1. Choose your brand</h3><div className="choice-grid">{brands.map(brand=><button type="button" key={brand.id} className={`choice-card ${selectedBrand===brand.id?'selected':''}`} onClick={()=>{setSelectedBrand(brand.id);setSelectedDevice(null)}}><span className="card-icon">{brand.icon}</span><div className="card-title">{brand.name}</div></button>)}</div></div>
+                        {selectedBrand && <div style={{marginTop:'46px'}}><h3 style={{marginBottom:'18px'}}>2. Choose your model</h3><div className="choice-grid">{devices.map(device=><button type="button" key={device.id} className={`choice-card ${selectedDevice===device.id?'selected':''}`} onClick={()=>setSelectedDevice(device.id)}><div className="card-title">{device.name}</div><div className="card-desc">Select model</div></button>)}</div></div>}
+                        {selectedBrand && selectedDevice && <div style={{marginTop:'46px'}}><h3 style={{marginBottom:'18px'}}>3. What needs fixing?</h3><div className="service-grid-v2">{REPAIRS.map(repair=><div key={repair.id} className={`service-card-v2 ${selectedIssue===repair.id?'selected':''}`} onClick={()=>{setSelectedIssue(repair.id);goNext(repair.id)}}><span className="card-icon">{repair.icon}</span><div className="card-title">{repair.name}</div><div className="card-desc">{repair.description}</div><div className="service-meta"><span>{repair.time}</span><b>₹{repair.price}</b></div></div>)}</div></div>}
+                    </div>
+                </div>
+            </section></div>);
+        }
+
+        // Device Repair Page
+        function DeviceRepairPage() {
+            const navigate = useNavigate();
+            const params = new URLSearchParams(window.location.search);
+            const brand = params.get('brand');
+            const device = params.get('device');
+            const repairId = params.get('repair');
+
+            const selectedDevice = DEVICES[brand]?.find(d => d.id === device);
+            const selectedRepair = REPAIRS.find(r => r.id === repairId);
+
+            if (!selectedRepair) return <div>Invalid selection</div>;
+
+            return (
+                <div>
+                    <section className="section" style={{ paddingTop: '160px' }}>
+                        <div className="progress-indicator">
+                            <div className="progress-step completed"></div>
+                            <div className="progress-step completed"></div>
+                            <div className="progress-step active"></div>
+                            <div className="progress-step"></div>
+                        </div>
+
+                        <h1 style={{ fontSize: '48px', marginBottom: '60px' }}>Service Details</h1>
+
+                        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+                            <div className="summary-card">
+                                <div className="summary-row">
+                                    <span className="summary-label">Device</span>
+                                    <span className="summary-value">{selectedDevice?.name}</span>
+                                </div>
+                                <div className="summary-row">
+                                    <span className="summary-label">Repair Service</span>
+                                    <span className="summary-value">{selectedRepair.name}</span>
+                                </div>
+                                <div className="summary-row">
+                                    <span className="summary-label">Service Details</span>
+                                    <span className="summary-value">{selectedRepair.detail}</span>
+                                </div>
+                                <div className="summary-row">
+                                    <span className="summary-label">Price</span>
+                                    <span className="summary-value" style={{ color: 'var(--accent)' }}>₹{selectedRepair.price}</span>
+                                </div>
+                                <div className="summary-row">
+                                    <span className="summary-label">Estimated Time</span>
+                                    <span className="summary-value">{selectedRepair.time}</span>
+                                </div>
+                                <div className="summary-row">
+                                    <span className="summary-label">Warranty</span>
+                                    <span className="summary-value">3 Months Parts Warranty</span>
+                                </div>
+                            </div>
+
+                            <button 
+                                className="btn btn-primary" 
+                                style={{ width: '100%', padding: '16px', fontSize: '16px', marginBottom: '16px' }}
+                                onClick={() => navigate(`/book-repair?brand=${brand}&device=${device}&repair=${repairId}`)}
+                            >
+                                Proceed to Booking
+                            </button>
+                            <button 
+                                className="btn btn-secondary" 
+                                style={{ width: '100%', padding: '16px', fontSize: '16px' }}
+                                onClick={() => navigate('/repair')}
+                            >
+                                Back to Services
+                            </button>
+                        </div>
+                    </section>
+                </div>
+            );
+        }
+
+        // Book Repair Page
+        function BookRepairPage() {
+            const navigate = useNavigate();
+            const params = new URLSearchParams(window.location.search);
+            const brand = params.get('brand');
+            const device = params.get('device');
+            const repairId = params.get('repair');
+
+            const selectedDevice = DEVICES[brand]?.find(d => d.id === device);
+            const selectedRepair = REPAIRS.find(r => r.id === repairId);
+
+            const [serviceMethod, setServiceMethod] = useState('home');
+            const [address, setAddress] = useState('');
+            const [selectedDate, setSelectedDate] = useState('');
+            const [selectedTime, setSelectedTime] = useState('');
+            const [name, setName] = useState('');
+            const [phone, setPhone] = useState('');
+            const [email, setEmail] = useState('');
+
+            const handleConfirm = () => {
+                if (name && phone && address && selectedDate && selectedTime) {
+                    const orderId = `HKM-${Math.floor(100000 + Math.random() * 899999)}`;
+                    const bookingData = {
+                        orderId,
+                        brand,
+                        device,
+                        repair: repairId,
+                        serviceMethod,
+                        address,
+                        date: selectedDate,
+                        time: selectedTime,
+                        name,
+                        phone,
+                        email,
+                        amount: selectedRepair.price,
+                        professional: PROFESSIONALS[0],
+                        status: 'BOOKED'
+                    };
+                    localStorage.setItem('lastBooking', JSON.stringify(bookingData));
+                    navigate(`/track?orderId=${orderId}`);
+                } else {
+                    alert('Please fill all required fields');
+                }
+            };
+
+            return (
+                <div>
+                    <section className="section" style={{ paddingTop: '160px' }}>
+                        <div className="progress-indicator">
+                            <div className="progress-step completed"></div>
+                            <div className="progress-step completed"></div>
+                            <div className="progress-step completed"></div>
+                            <div className="progress-step active"></div>
+                        </div>
+
+                        <h1 style={{ fontSize: '48px', marginBottom: '60px', textAlign: 'center' }}>Complete Your Booking</h1>
+
+                        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+                            {/* Summary */}
+                            <div className="summary-card">
+                                <div className="summary-row">
+                                    <span className="summary-label">Device</span>
+                                    <span className="summary-value">{selectedDevice?.name}</span>
+                                </div>
+                                <div className="summary-row">
+                                    <span className="summary-label">Repair Service</span>
+                                    <span className="summary-value">{selectedRepair.name}</span>
+                                </div>
+                                <div className="summary-row">
+                                    <span className="summary-label">Service Cost</span>
+                                    <span className="summary-value" style={{ color: 'var(--accent)' }}>₹{selectedRepair.price}</span>
+                                </div>
+                            </div>
+
+                            {/* Service Method */}
+                            <div className="form-group">
+                                <div className="form-label">Select Service Method</div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                    <div 
+                                        className={`card ${serviceMethod === 'home' ? 'selected' : ''}`}
+                                        onClick={() => setServiceMethod('home')}
+                                        style={{ cursor: 'pointer' }}
+                                    >
+                                        <span className="card-icon">🏠</span>
+                                        <div className="card-title">Home Service</div>
+                                        <div className="card-desc">We come to you</div>
+                                    </div>
+                                    <div 
+                                        className={`card ${serviceMethod === 'store' ? 'selected' : ''}`}
+                                        onClick={() => setServiceMethod('store')}
+                                        style={{ cursor: 'pointer' }}
+                                    >
+                                        <span className="card-icon">🏪</span>
+                                        <div className="card-title">Visit Store</div>
+                                        <div className="card-desc">Visit our center</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Address */}
+                            <div className="form-group">
+                                <label className="form-label">Delivery Address *</label>
+                                <input 
+                                    type="text" 
+                                    className="form-input"
+                                    placeholder="123 Main St, New Delhi"
+                                    value={address}
+                                    onChange={(e) => setAddress(e.target.value)}
+                                />
+                            </div>
+
+                            {/* Date & Time */}
+                            <div className="form-row">
+                                <div className="form-group" style={{ width: '100%' }}>
+                                    <label className="form-label">Select Date *</label>
+                                    <input 
+                                        type="date" 
+                                        className="form-input"
+                                        value={selectedDate}
+                                        onChange={(e) => setSelectedDate(e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-group" style={{ width: '100%' }}>
+                                    <label className="form-label">Select Time *</label>
+                                    <select 
+                                        className="form-input"
+                                        value={selectedTime}
+                                        onChange={(e) => setSelectedTime(e.target.value)}
+                                    >
+                                        <option value="">Choose time slot</option>
+                                        {TIME_SLOTS.map(slot => (
+                                            <option key={slot} value={slot}>{slot}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Customer Details */}
+                            <div className="form-group">
+                                <label className="form-label">Full Name *</label>
+                                <input 
+                                    type="text" 
+                                    className="form-input"
+                                    placeholder="Your full name"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label">Phone Number *</label>
+                                <input 
+                                    type="tel" 
+                                    className="form-input"
+                                    placeholder="+91 98765 43210"
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label">Email Address</label>
+                                <input 
+                                    type="email" 
+                                    className="form-input"
+                                    placeholder="your@email.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+                            </div>
+
+                            {/* Final Summary */}
+                            <div className="summary-card">
+                                <div className="summary-row">
+                                    <span className="summary-label">Service Method</span>
+                                    <span className="summary-value">{serviceMethod === 'home' ? 'Home Service' : 'Visit Store'}</span>
+                                </div>
+                                <div className="summary-row">
+                                    <span className="summary-label">Scheduled For</span>
+                                    <span className="summary-value">{selectedDate} at {selectedTime}</span>
+                                </div>
+                                <div className="summary-row">
+                                    <span className="summary-label">Total Amount</span>
+                                    <span className="summary-value" style={{ color: 'var(--accent)', fontSize: '18px' }}>₹{selectedRepair.price}</span>
+                                </div>
+                            </div>
+
+                            <button 
+                                className="btn btn-primary" 
+                                style={{ width: '100%', padding: '16px', fontSize: '16px', marginBottom: '16px' }}
+                                onClick={handleConfirm}
+                            >
+                                Confirm & Book Repair
+                            </button>
+                        </div>
+                    </section>
+                </div>
+            );
+        }
+
+        // Track Repair Page
+        function TrackRepairPage() {
+            const params = new URLSearchParams(window.location.search);
+            const orderId = params.get('orderId');
+            const [order, setOrder] = useState(null);
+            const [searchOrderId, setSearchOrderId] = useState(orderId || '');
+            const [searchPhone, setSearchPhone] = useState('');
+
+            useEffect(() => {
+                if (orderId) {
+                    const booking = localStorage.getItem('lastBooking');
+                    if (booking) {
+                        const data = JSON.parse(booking);
+                        if (data.orderId === orderId) {
+                            setOrder({
+                                ...data,
+                                status: 'REPAIR IN PROGRESS',
+                                professional: PROFESSIONALS[0],
+                                timeline: [
+                                    { stage: 'Booking Confirmed', completed: true },
+                                    { stage: 'Professional Assigned', completed: true },
+                                    { stage: 'En Route', completed: true },
+                                    { stage: 'Arrived at Location', completed: true },
+                                    { stage: 'Device Inspection', completed: true },
+                                    { stage: 'Repair Approved', completed: true },
+                                    { stage: 'Payment Verified', completed: true },
+                                    { stage: 'Repair In Progress', completed: false, active: true },
+                                    { stage: 'Quality Check', completed: false },
+                                    { stage: 'Repair Completed', completed: false },
+                                    { stage: 'Warranty Activated', completed: false },
+                                ]
+                            });
+                        }
+                    }
+                }
+            }, [orderId]);
+
+            const handleSearch = () => {
+                const saved = localStorage.getItem('lastBooking');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    const phoneMatches = !searchPhone || data.phone === searchPhone;
+                    if (data.orderId === searchOrderId && phoneMatches) {
+                        setOrder({...data, device: DEVICES[data.brand]?.find(d=>d.id===data.device)?.name || data.device, repair: REPAIRS.find(r=>r.id===data.repair)?.name || data.repair, status:'BOOKED', professional: PROFESSIONALS[0], timeline:[{stage:'Booking Confirmed',completed:true},{stage:'Professional Assignment',completed:false,active:true},{stage:'En Route',completed:false},{stage:'Device Inspection',completed:false},{stage:'Repair In Progress',completed:false},{stage:'Quality Check',completed:false},{stage:'Repair Completed',completed:false},{stage:'Warranty Activated',completed:false}]});
+                        return;
+                    }
+                }
+                if (searchOrderId === 'HKM-240518') {
+                    const demoOrder = {
+                        orderId: 'HKM-240518',
+                        device: 'iPhone 15 Pro',
+                        repair: 'Screen Repair',
+                        amount: 3999,
+                        professional: PROFESSIONALS[1],
+                        status: 'REPAIR IN PROGRESS',
+                        timeline: [
+                            { stage: 'Booking Confirmed', completed: true },
+                            { stage: 'Professional Assigned', completed: true },
+                            { stage: 'En Route', completed: true },
+                            { stage: 'Arrived at Location', completed: true },
+                            { stage: 'Device Inspection', completed: true },
+                            { stage: 'Repair Approved', completed: true },
+                            { stage: 'Payment Verified', completed: true },
+                            { stage: 'Repair In Progress', completed: false, active: true },
+                            { stage: 'Quality Check', completed: false },
+                            { stage: 'Repair Completed', completed: false },
+                            { stage: 'Warranty Activated', completed: false },
+                        ]
+                    };
+                    setOrder(demoOrder);
+                }
+            };
+
+            return (
+                <div>
+                    <section className="hero" style={{ minHeight: '40vh' }}>
+                        <h1>Track your <span>repair journey</span></h1>
+                        <p className="hero-subtitle">Live updates at every step</p>
+                    </section>
+
+                    <section className="section">
+                        {!order ? (
+                            <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+                                <h2>Track Your Repair</h2>
+                                <div className="form-group">
+                                    <label className="form-label">Order ID</label>
+                                    <input 
+                                        type="text" 
+                                        className="form-input"
+                                        placeholder="e.g., HKM-240518"
+                                        value={searchOrderId}
+                                        onChange={(e) => setSearchOrderId(e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Phone Number</label>
+                                    <input 
+                                        type="tel" 
+                                        className="form-input"
+                                        placeholder="+91 XXXXXXXXXX"
+                                        value={searchPhone}
+                                        onChange={(e) => setSearchPhone(e.target.value)}
+                                    />
+                                </div>
+                                <button 
+                                    className="btn btn-primary" 
+                                    style={{ width: '100%', padding: '16px', fontSize: '16px' }}
+                                    onClick={handleSearch}
+                                >
+                                    Track My Repair
+                                </button>
+                                <div style={{ marginTop: '40px', padding: '24px', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                                    <p style={{ color: 'var(--text-secondary)', marginBottom: '12px', fontSize: '14px' }}>Demo Order ID:</p>
+                                    <code style={{ color: 'var(--accent)', fontWeight: '600', fontSize: '16px', letterSpacing: '1px' }}>HKM-240518</code>
+                                </div>
+                            </div>
+                        ) : (
+                            <div>
+                                {/* Order Status */}
+                                <div className="order-status">
+                                    <div className="order-header">
+                                        <div>
+                                            <div className="order-id">{order.orderId}</div>
+                                            <div style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '8px' }}>
+                                                {order.device} • {order.repair}
+                                            </div>
+                                        </div>
+                                        <div className="status-badge">{order.status === 'BOOKED' ? 'Booked' : 'In Progress'}</div>
+                                    </div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '32px' }}>
+                                        <div>
+                                            <div style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '4px' }}>Assigned Professional</div>
+                                            <div style={{ fontSize: '18px', fontWeight: '600' }}>{order.professional.name}</div>
+                                            <div style={{ fontSize: '13px', color: 'var(--accent)', marginTop: '8px' }}>⭐ {order.professional.rating} • {order.professional.specialization}</div>
+                                        </div>
+                                        <div>
+                                            <div style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '4px' }}>Service Amount</div>
+                                            <div style={{ fontSize: '18px', fontWeight: '600', color: 'var(--accent)' }}>₹{order.amount}</div>
+                                            <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '8px' }}>3 Months Warranty Included</div>
+                                        </div>
+                                        <div>
+                                            <div style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '4px' }}>Estimated Completion</div>
+                                            <div style={{ fontSize: '18px', fontWeight: '600' }}>Today, 04:30 PM</div>
+                                            <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '8px' }}>⏱️ 1 hour remaining</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Timeline */}
+                                <h2 style={{ marginBottom: '40px', marginTop: '60px' }}>Repair Progress</h2>
+                                <div className="timeline">
+                                    {order.timeline.map((item, idx) => (
+                                        <div 
+                                            key={idx}
+                                            className={`timeline-item ${item.completed ? 'completed' : ''} ${item.active ? 'active' : ''}`}
+                                        >
+                                            <div className="timeline-node"></div>
+                                            <div className="timeline-content">
+                                                <div className="timeline-title">{item.stage}</div>
+                                                {item.completed && <div className="timeline-desc">✓ Completed</div>}
+                                                {item.active && <div className="timeline-desc" style={{ color: 'var(--accent)' }}>⏳ Currently in progress...</div>}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Warranty Section */}
+                                <div style={{ marginTop: '60px', padding: '32px', background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-surface) 100%)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                                    <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '24px' }}>🛡️ Your Warranty Protection</h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '32px', fontSize: '14px' }}>
+                                        <div>
+                                            <div style={{ color: 'var(--accent)', fontWeight: '600', marginBottom: '8px' }}>Coverage Type</div>
+                                            <div style={{ color: 'var(--text-secondary)' }}>Parts & Labor Warranty</div>
+                                        </div>
+                                        <div>
+                                            <div style={{ color: 'var(--accent)', fontWeight: '600', marginBottom: '8px' }}>Duration</div>
+                                            <div style={{ color: 'var(--text-secondary)' }}>3 Months from completion</div>
+                                        </div>
+                                        <div>
+                                            <div style={{ color: 'var(--accent)', fontWeight: '600', marginBottom: '8px' }}>Support</div>
+                                            <div style={{ color: 'var(--text-secondary)' }}>24/7 Customer Support</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button 
+                                    className="btn btn-secondary" 
+                                    style={{ marginTop: '40px', padding: '12px 24px' }}
+                                    onClick={() => setOrder(null)}
+                                >
+                                    Track Another Repair
+                                </button>
+                            </div>
+                        )}
+                    </section>
+                </div>
+            );
+        }
+
+        // Router
+        function useNavigate() {
+            return (path) => {
+                window.history.pushState(null, '', path);
+                window.setCurrentPage(path);
+            };
+        }
+
+        // App
+        function App() {
+            const [currentPage, setCurrentPage] = useState(window.location.pathname);
+
+            window.setCurrentPage = setCurrentPage;
+
+            useEffect(() => {
+                const handlePopState = () => {
+                    setCurrentPage(window.location.pathname);
+                };
+                window.addEventListener('popstate', handlePopState);
+                return () => window.removeEventListener('popstate', handlePopState);
+            }, []);
+
+            const renderPage = () => {
+                if (currentPage.includes('/repair') && !currentPage.includes('/device-repair') && !currentPage.includes('/book-repair')) {
+                    return <RepairPage />;
+                } else if (currentPage.includes('/device-repair')) {
+                    return <DeviceRepairPage />;
+                } else if (currentPage.includes('/book-repair')) {
+                    return <BookRepairPage />;
+                } else if (currentPage.includes('/track')) {
+                    return <TrackRepairPage />;
+                } else {
+                    return <HomePage />;
+                }
+            };
+
+            return (
+                <div>
+                    <Navigation />
+                    {renderPage()}
+                    <footer className="footer" id="support">
+                        <div className="footer-content">
+                            <div className="footer-column">
+                                <h3>HUKMEE</h3>
+                                <a href="#about">About Us</a>
+                                <a href="#careers">Careers</a>
+                                <a href="#blog">Blog</a>
+                                <a href="#press">Press</a>
+                            </div>
+                            <div className="footer-column">
+                                <h3>Services</h3>
+                                <a href="#repair">Mobile Repair</a>
+                                <a href="#devices">Device Support</a>
+                                <a href="#warranty">Warranty Info</a>
+                                <a href="#pricing">Pricing</a>
+                            </div>
+                            <div className="footer-column">
+                                <h3>Support</h3>
+                                <a href="#faq">FAQ</a>
+                                <a href="#contact">Contact Us</a>
+                                <a href="/track" onClick={(e) => { e.preventDefault(); window.history.pushState(null, '', '/track'); window.setCurrentPage('/track'); }}>Track Order</a>
+                                <a href="#help">Help Center</a>
+                            </div>
+                            <div className="footer-column">
+                                <h3>Company</h3>
+                                <a href="#mission">Our Mission</a>
+                                <a href="#community">Community</a>
+                                <a href="#partners">Partners</a>
+                                <a href="#investors">Investors</a>
+                            </div>
+                            <div className="footer-column">
+                                <h3>Legal</h3>
+                                <a href="#privacy">Privacy Policy</a>
+                                <a href="#terms">Terms of Service</a>
+                                <a href="#cookies">Cookie Policy</a>
+                                <a href="#security">Security</a>
+                            </div>
+                        </div>
+                        <div className="footer-bottom">
+                            <p>© {new Date().getFullYear()} HUKMEE. Bringing professional mobile device repair to your doorstep. All rights reserved.</p>
+                        </div>
+                    </footer>
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
